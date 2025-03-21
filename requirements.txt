@@ -1,0 +1,10 @@
+
+
+streamlit
+numpy
+pandas
+scikit-learn
+pickle-mixin  # Required for loading pickle models
+pickle
+matplotlib
+seaborn 
