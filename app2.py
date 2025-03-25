@@ -1,12 +1,13 @@
 
-
-
 import streamlit as st
 import pandas as pd
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+# Initialize model variable
+model = None
 
 # Replace the model loading block with this:
 uploaded_file = st.file_uploader("Upload Model File", type="pkl")
@@ -23,7 +24,7 @@ st.title("🚘 Car Price Prediction Application")
 
 with st.sidebar.expander('Who is the developer of this App ?'):
     st.write('**This Application is developed and deployed by Cheikh Ahmed,MedS, Anda (a Data Scientist)**')
-  
+
 st.header("Enter car details below to predict the price of a car.")
 
 # Define categorical options (ensure alignment with training data)
@@ -67,18 +68,21 @@ features[-5:] = [year, engine_size, mileage, doors, owner_count]
 # Reshape for model input
 features = features.reshape(1, -1)
 
-# Predict button
-if st.button("🔮 Predict Price"):
-    prediction = model.predict(features)[0]
-    st.success(f"💰 Predicted Car Price: ${prediction:,.2f}")
+# Check if model is loaded before predicting
+if model is not None:
+    # Predict button
+    if st.button("🔮 Predict Price"):
+        prediction = model.predict(features)[0]
+        st.success(f"💰 Predicted Car Price: ${prediction:,.2f}")
 
-    # Visualization - Show relationship of features with price
-with st.sidebar.expander('Visualization Shows relationship of features with price'):
-    st.write('Input Feature Comparision')
-       
-    fig, ax = plt.subplots(figsize=(8, 5))
-    sns.barplot(x=['Year', 'Engine Size', 'Mileage', 'Doors', 'Owner Count'], 
-                y=[year, engine_size, mileage, doors, owner_count], ax=ax, palette="Blues")
-    ax.set_ylabel("Feature Values")
-    ax.set_title("📊 Input Feature Comparison")
-    st.pyplot(fig)
+        # Visualization - Show relationship of features with price
+        with st.sidebar.expander('Visualization Shows relationship of features with price'):
+            st.write('Input Feature Comparision')
+            fig, ax = plt.subplots(figsize=(8, 5))
+            sns.barplot(x=['Year', 'Engine Size', 'Mileage', 'Doors', 'Owner Count'], 
+                        y=[year, engine_size, mileage, doors, owner_count], ax=ax, palette="Blues")
+            ax.set_ylabel("Feature Values")
+            ax.set_title("📊 Input Feature Comparison")
+            st.pyplot(fig)
+else:
+    st.error("Please upload a model file before making predictions.")
